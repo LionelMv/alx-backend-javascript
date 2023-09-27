@@ -9,7 +9,7 @@ Here we see the changes made from previous Javascript to ES6.
 ## Environment
 - Language: Javascript, NodeJs 12.11.x
 - OS Ubuntu 18.04 LTS
-- Style guidelines: [Javascript Standard](https://standardjs.com/rules.html) || [ESLint - Pluggable Javascript linter](https://eslint.org/)
+- Style guidelines: [Javascript Standard](https://standardjs.com/rules.html) || [Javascript Semistandard](https://github.com/standard/semistandard) || [ESLint - Pluggable Javascript linter](https://eslint.org/)
 
 ## Authors
 [Lionel Mv](https://www.linkedin.com/in/lionelmwangi/)
