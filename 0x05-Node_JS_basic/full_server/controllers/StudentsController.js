@@ -52,3 +52,4 @@ class StudentsController {
 }
 
 export default StudentsController;
+module.exports = StudentsController;
