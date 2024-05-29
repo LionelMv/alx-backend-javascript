@@ -1,56 +1,77 @@
 const chai = require("chai");
-const expect = chai.expect;
-const request = require("request");
+const chaiHttp = require("chai-http");
+const { expect } = chai;
+
+chai.use(chaiHttp);
+
+const url = "http://localhost:7865";
 
 describe("API test cases", () => {
-  const url = "http://localhost:7865";
-
-  it("should return the correct response", (done) => {
-    request.get(`${url}/`, (error, res, body) => {
-      expect(res.statusCode).to.be.equal(200);
-      expect(body).to.be.equal("Welcome to the payment system");
-      done();
-    });
-  });
-
-  it("should check the cart route", (done) => {
-    request.get(`${url}/cart/47`, (error, res, body) => {
-      expect(res.statusCode).to.be.equal(200);
-      expect(body).to.be.equal("Payment methods for cart 47");
-      done();
-    });
-  });
-
-  it("should check if the id is not a number", (done) => {
-    request.get(`${url}/cart/him`, (error, res) => {
-      expect(res.statusCode).to.be.equal(404);
-      done();
-    });
-  });
-
-  it("should check if the id is not a number", (done) => {
-    request.get(`${url}/cart/-47`, (error, res) => {
-      expect(res.statusCode).to.be.equal(404);
-      done();
-    });
-  });
-
-  it("GET /available_payments returns valid response", (done) => {
-    request.get(`${url}/available_payments`, (error, res, body) => {
-      expect(res.statusCode).to.be.equal(200);
-      expect(JSON.parse(body)).to.be.deep.equal({
-        payment_methods: { credit_cards: true, paypal: false },
+  it("should return the welcome message", (done) => {
+    chai
+      .request(url)
+      .get("/")
+      .end((error, res) => {
+        expect(res).to.have.status(200);
+        expect(res.text).to.equal("Welcome to the payment system");
+        done();
       });
-      done();
-    });
   });
 
-  it("POST /login returns valid response", (done) => {
+  it("should return payment methods for a valid cart ID", (done) => {
+    chai
+      .request(url)
+      .get("/cart/47")
+      .end((error, res) => {
+        expect(res).to.have.status(200);
+        expect(res.text).to.equal("Payment methods for cart 47");
+        done();
+      });
+  });
+
+  it("should return 404 for a non-numeric cart ID", (done) => {
+    chai
+      .request(url)
+      .get("/cart/him")
+      .end((error, res) => {
+        expect(res).to.have.status(404);
+        done();
+      });
+  });
+
+  it("should return 404 for a negative cart ID", (done) => {
+    chai
+      .request(url)
+      .get("/cart/-47")
+      .end((error, res) => {
+        expect(res).to.have.status(404);
+        done();
+      });
+  });
+
+  it("should return available payment methods", (done) => {
+    chai
+      .request(url)
+      .get("/available_payments")
+      .end((error, res) => {
+        expect(res).to.have.status(200);
+        expect(res.body).to.deep.equal({
+          payment_methods: { credit_cards: true, paypal: false },
+        });
+        done();
+      });
+  });
+
+  it("should return welcome message for a valid login", (done) => {
     const userData = { userName: "John" };
-    request.post(`${url}/login`, { json: userData }, (error, res, body) => {
-      expect(res.statusCode).to.be.equal(200);
-      expect(body).to.be.equal(`Welcome ${userData.userName}`);
-      done();
-    });
+    chai
+      .request(url)
+      .post("/login")
+      .send(userData)
+      .end((error, res) => {
+        expect(res).to.have.status(200);
+        expect(res.text).to.equal(`Welcome ${userData.userName}`);
+        done();
+      });
   });
 });
